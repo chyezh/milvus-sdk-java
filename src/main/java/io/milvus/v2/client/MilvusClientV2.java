@@ -3,6 +3,9 @@ package io.milvus.v2.client;
 import io.grpc.ManagedChannel;
 import io.milvus.grpc.MilvusServiceGrpc;
 import io.milvus.v2.service.collection.CollectionService;
+import io.milvus.v2.service.rg.ResourceGroupService;
+import io.milvus.v2.service.rg.request.*;
+import io.milvus.v2.service.rg.response.*;
 import io.milvus.v2.service.collection.request.*;
 import io.milvus.v2.service.collection.response.DescribeCollectionResp;
 import io.milvus.v2.service.collection.response.GetCollectionStatsResp;
@@ -44,6 +47,7 @@ public class MilvusClientV2 {
     private MilvusServiceGrpc.MilvusServiceBlockingStub blockingStub;
     private final ClientUtils clientUtils = new ClientUtils();
     private final CollectionService collectionService = new CollectionService();
+    private final ResourceGroupService resourceGroupService = new ResourceGroupService();
     private final IndexService indexService = new IndexService();
     private final VectorService vectorService = new VectorService();
     private final PartitionService partitionService = new PartitionService();
@@ -54,6 +58,7 @@ public class MilvusClientV2 {
 
     /**
      * Creates a Milvus client instance.
+     * 
      * @param connectConfig Milvus server connection configuration
      */
     public MilvusClientV2(ConnectConfig connectConfig) {
@@ -61,15 +66,16 @@ public class MilvusClientV2 {
             connect(connectConfig);
         }
     }
+
     /**
      * connect to Milvus server
      *
      * @param connectConfig Milvus server connection configuration
      */
-    private void connect(ConnectConfig connectConfig){
+    private void connect(ConnectConfig connectConfig) {
         this.connectConfig = connectConfig;
         try {
-            if(this.channel != null) {
+            if (this.channel != null) {
                 // close channel first
                 close(3);
             }
@@ -79,9 +85,9 @@ public class MilvusClientV2 {
         channel = clientUtils.getChannel(connectConfig);
 
         if (connectConfig.getRpcDeadlineMs() > 0) {
-            blockingStub =  MilvusServiceGrpc.newBlockingStub(channel).withWaitForReady()
+            blockingStub = MilvusServiceGrpc.newBlockingStub(channel).withWaitForReady()
                     .withDeadlineAfter(connectConfig.getRpcDeadlineMs(), TimeUnit.MILLISECONDS);
-        }else {
+        } else {
             blockingStub = MilvusServiceGrpc.newBlockingStub(channel);
         }
 
@@ -93,6 +99,7 @@ public class MilvusClientV2 {
 
     /**
      * use Database
+     * 
      * @param dbName databaseName
      */
     public void useDatabase(@NonNull String dbName) {
@@ -102,12 +109,12 @@ public class MilvusClientV2 {
             this.connectConfig.setDbName(dbName);
             this.close(3);
             this.connect(this.connectConfig);
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             logger.error("close connect error");
         }
     }
 
-    //Collection Operations
+    // Collection Operations
     /**
      * Creates a collection in Milvus.
      * @param request create collection request
@@ -143,6 +150,7 @@ public class MilvusClientV2 {
     public void dropCollection(DropCollectionReq request) {
         collectionService.dropCollection(this.blockingStub, request);
     }
+
     /**
      * Checks whether a collection exists in Milvus.
      *
@@ -152,6 +160,7 @@ public class MilvusClientV2 {
     public Boolean hasCollection(HasCollectionReq request) {
         return collectionService.hasCollection(this.blockingStub, request);
     }
+
     /**
      * Gets the collection info in Milvus.
      *
@@ -161,6 +170,7 @@ public class MilvusClientV2 {
     public DescribeCollectionResp describeCollection(DescribeCollectionReq request) {
         return collectionService.describeCollection(this.blockingStub, request);
     }
+
     /**
      * get collection stats for a collection in Milvus.
      *
@@ -170,6 +180,7 @@ public class MilvusClientV2 {
     public GetCollectionStatsResp getCollectionStats(GetCollectionStatsReq request) {
         return collectionService.getCollectionStats(this.blockingStub, request);
     }
+
     /**
      * rename collection in a collection in Milvus.
      *
@@ -178,6 +189,7 @@ public class MilvusClientV2 {
     public void renameCollection(RenameCollectionReq request) {
         collectionService.renameCollection(this.blockingStub, request);
     }
+
     /**
      * Loads a collection into memory in Milvus.
      *
@@ -186,6 +198,7 @@ public class MilvusClientV2 {
     public void loadCollection(LoadCollectionReq request) {
         collectionService.loadCollection(this.blockingStub, request);
     }
+
     /**
      * Releases a collection from memory in Milvus.
      *
@@ -194,6 +207,7 @@ public class MilvusClientV2 {
     public void releaseCollection(ReleaseCollectionReq request) {
         collectionService.releaseCollection(this.blockingStub, request);
     }
+
     /**
      * Checks whether a collection is loaded in Milvus.
      *
@@ -204,7 +218,7 @@ public class MilvusClientV2 {
         return collectionService.getLoadState(this.blockingStub, request);
     }
 
-    //Index Operations
+    // Index Operations
     /**
      * Creates an index for a specified field in a collection in Milvus.
      *
@@ -213,6 +227,7 @@ public class MilvusClientV2 {
     public void createIndex(CreateIndexReq request) {
         indexService.createIndex(this.blockingStub, request);
     }
+
     /**
      * Drops an index for a specified field in a collection in Milvus.
      *
@@ -221,8 +236,10 @@ public class MilvusClientV2 {
     public void dropIndex(DropIndexReq request) {
         indexService.dropIndex(this.blockingStub, request);
     }
+
     /**
-     * Checks whether an index exists for a specified field in a collection in Milvus.
+     * Checks whether an index exists for a specified field in a collection in
+     * Milvus.
      *
      * @param request describe index request
      * @return DescribeIndexResp
@@ -242,6 +259,7 @@ public class MilvusClientV2 {
     public InsertResp insert(InsertReq request) {
         return vectorService.insert(this.blockingStub, request);
     }
+
     /**
      * Upsert vectors into a collection in Milvus.
      *
@@ -251,6 +269,7 @@ public class MilvusClientV2 {
     public UpsertResp upsert(UpsertReq request) {
         return vectorService.upsert(this.blockingStub, request);
     }
+
     /**
      * Deletes vectors in a collection in Milvus.
      *
@@ -260,6 +279,7 @@ public class MilvusClientV2 {
     public DeleteResp delete(DeleteReq request) {
         return vectorService.delete(this.blockingStub, request);
     }
+
     /**
      * Gets vectors in a collection in Milvus.
      *
@@ -279,6 +299,7 @@ public class MilvusClientV2 {
     public QueryResp query(QueryReq request) {
         return vectorService.query(this.blockingStub, request);
     }
+
     /**
      * Searches vectors in a collection in Milvus.
      *
@@ -336,6 +357,7 @@ public class MilvusClientV2 {
     public void loadPartitions(LoadPartitionsReq request) {
         partitionService.loadPartitions(this.blockingStub, request);
     }
+
     /**
      * Releases partitions in a collection in Milvus.
      *
@@ -344,6 +366,7 @@ public class MilvusClientV2 {
     public void releasePartitions(ReleasePartitionsReq request) {
         partitionService.releasePartitions(this.blockingStub, request);
     }
+
     // rbac operations
     // user operations
     /**
@@ -354,6 +377,7 @@ public class MilvusClientV2 {
     public List<String> listUsers() {
         return userService.listUsers(this.blockingStub);
     }
+
     /**
      * describe user
      *
@@ -363,6 +387,7 @@ public class MilvusClientV2 {
     public DescribeUserResp describeUser(DescribeUserReq request) {
         return userService.describeUser(this.blockingStub, request);
     }
+
     /**
      * create user
      *
@@ -371,6 +396,7 @@ public class MilvusClientV2 {
     public void createUser(CreateUserReq request) {
         userService.createUser(this.blockingStub, request);
     }
+
     /**
      * change password
      *
@@ -379,6 +405,7 @@ public class MilvusClientV2 {
     public void updatePassword(UpdatePasswordReq request) {
         userService.updatePassword(this.blockingStub, request);
     }
+
     /**
      * drop user
      *
@@ -387,6 +414,7 @@ public class MilvusClientV2 {
     public void dropUser(DropUserReq request) {
         userService.dropUser(this.blockingStub, request);
     }
+
     // role operations
     /**
      * list roles
@@ -396,6 +424,7 @@ public class MilvusClientV2 {
     public List<String> listRoles() {
         return roleService.listRoles(this.blockingStub);
     }
+
     /**
      * describe role
      *
@@ -405,6 +434,7 @@ public class MilvusClientV2 {
     public DescribeRoleResp describeRole(DescribeRoleReq request) {
         return roleService.describeRole(this.blockingStub, request);
     }
+
     /**
      * create role
      *
@@ -413,6 +443,7 @@ public class MilvusClientV2 {
     public void createRole(CreateRoleReq request) {
         roleService.createRole(this.blockingStub, request);
     }
+
     /**
      * drop role
      *
@@ -421,6 +452,7 @@ public class MilvusClientV2 {
     public void dropRole(DropRoleReq request) {
         roleService.dropRole(this.blockingStub, request);
     }
+
     /**
      * grant privilege
      *
@@ -429,6 +461,7 @@ public class MilvusClientV2 {
     public void grantPrivilege(GrantPrivilegeReq request) {
         roleService.grantPrivilege(this.blockingStub, request);
     }
+
     /**
      * revoke privilege
      *
@@ -437,6 +470,7 @@ public class MilvusClientV2 {
     public void revokePrivilege(RevokePrivilegeReq request) {
         roleService.revokePrivilege(this.blockingStub, request);
     }
+
     /**
      * grant role
      *
@@ -445,6 +479,7 @@ public class MilvusClientV2 {
     public void grantRole(GrantRoleReq request) {
         roleService.grantRole(this.blockingStub, request);
     }
+
     /**
      * revoke role
      *
@@ -462,18 +497,21 @@ public class MilvusClientV2 {
     public void createAlias(CreateAliasReq request) {
         utilityService.createAlias(this.blockingStub, request);
     }
+
     /**
      * drop aliases
      */
     public void dropAlias(DropAliasReq request) {
         utilityService.dropAlias(this.blockingStub, request);
     }
+
     /**
      * alter aliases
      */
     public void alterAlias(AlterAliasReq request) {
         utilityService.alterAlias(this.blockingStub, request);
     }
+
     /**
      * list aliases
      *
@@ -482,6 +520,7 @@ public class MilvusClientV2 {
     public ListAliasResp listAliases() {
         return utilityService.listAliases(this.blockingStub);
     }
+
     /**
      * describe aliases
      *
@@ -497,9 +536,63 @@ public class MilvusClientV2 {
      * @param maxWaitSeconds max wait seconds
      */
     public void close(long maxWaitSeconds) throws InterruptedException {
-        if(channel!= null){
+        if (channel != null) {
             channel.shutdownNow();
             channel.awaitTermination(maxWaitSeconds, TimeUnit.SECONDS);
         }
+    }
+
+    /**
+     * create resource group
+     * 
+     * @param request create resource group request
+     */
+    public void createResourceGroup(CreateResourceGroupReq request) {
+        resourceGroupService.createResourceGroup(this.blockingStub, request);
+    }
+
+    /**
+     * update resource group
+     * 
+     * @param request update resource group request
+     */
+    public void updateResourceGroup(UpdateResourceGroupsReq request) {
+        resourceGroupService.updateResourceGroups(this.blockingStub, request);
+    }
+
+    /**
+     * list resource groups
+     * 
+     * @param request list resource group request
+     */
+    public ListResourceGroupsResp listResourceGroups(ListResourceGroupsReq request) {
+        return resourceGroupService.listResourceGroups(this.blockingStub, request);
+    }
+
+    /**
+     * describe resource group
+     * 
+     * @param request
+     */
+    public DescribeResourceGroupResp describeResourceGroup(DescribeResourceGroupReq request) {
+        return resourceGroupService.describeResourceGroup(this.blockingStub, request);
+    }
+
+    /**
+     * describe resource group
+     * 
+     * @param request drop resource group request
+     */
+    public void dropResourceGroup(DropResourceGroupReq request) {
+        resourceGroupService.dropResourceGroup(this.blockingStub, request);
+    }
+
+    /**
+     * transfer replica
+     * 
+     * @param request transfer replica request
+     */
+    public void transferReplica(TransferReplicaReq request) {
+        resourceGroupService.transferReplica(this.blockingStub, request);
     }
 }
