@@ -29,7 +29,7 @@ public class ResourceGroupService extends BaseService {
             ListResourceGroupsReq request) {
         io.milvus.grpc.ListResourceGroupsResponse response = blockingStub.listResourceGroups(request.toGRPC());
         rpcUtils.handleResponse(request.toString(), response.getStatus());
-        return ListResourceGroupsResp.fromGRPC(response);
+        return new ListResourceGroupsResp(response);
     }
 
     public DescribeResourceGroupResp describeResourceGroup(MilvusServiceGrpc.MilvusServiceBlockingStub blockingStub,
@@ -37,7 +37,7 @@ public class ResourceGroupService extends BaseService {
         io.milvus.grpc.DescribeResourceGroupResponse response = blockingStub
                 .describeResourceGroup(request.toGRPC());
         rpcUtils.handleResponse(request.toString(), response.getStatus());
-        return DescribeResourceGroupResp.fromGRPC(response);
+        return new DescribeResourceGroupResp(response);
     }
 
     public void transferReplica(MilvusServiceGrpc.MilvusServiceBlockingStub blockingStub,

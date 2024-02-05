@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 public class ListResourceGroupsResp {
     private List<String> resourcesGroupNames;
 
-    public static ListResourceGroupsResp fromGRPC(io.milvus.grpc.ListResourceGroupsResponse response) {
-        return ListResourceGroupsResp.builder().resourcesGroupNames(response.getResourceGroupsList()).build();
+    public ListResourceGroupsResp(io.milvus.grpc.ListResourceGroupsResponse response) {
+        this.resourcesGroupNames = response.getResourceGroupsList();
     }
 }

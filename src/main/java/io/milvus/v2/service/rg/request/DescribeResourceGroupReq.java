@@ -8,6 +8,10 @@ import lombok.experimental.SuperBuilder;
 public class DescribeResourceGroupReq {
     private String resourceGroupName;
 
+    public DescribeResourceGroupReq(String resourceGroupName) {
+        this.resourceGroupName = resourceGroupName;
+    }
+
     public io.milvus.grpc.DescribeResourceGroupRequest toGRPC() {
         return io.milvus.grpc.DescribeResourceGroupRequest.newBuilder().setResourceGroup(resourceGroupName).build();
     }

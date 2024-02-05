@@ -10,6 +10,11 @@ public class CreateResourceGroupReq {
      private String resourceGroupName;
      private ResourceGroupConfig config;
 
+     public CreateResourceGroupReq(String resourceGroupName, ResourceGroupConfig config) {
+          this.resourceGroupName = resourceGroupName;
+          this.config = config;
+     }
+
      public io.milvus.grpc.CreateResourceGroupRequest toGRPC() {
           return io.milvus.grpc.CreateResourceGroupRequest.newBuilder().setResourceGroup(resourceGroupName)
                     .setConfig(config.toGRPC()).build();

@@ -9,8 +9,7 @@ import lombok.experimental.SuperBuilder;
 public class DescribeResourceGroupResp {
     private ResourceGroup resourceGroup;
 
-    public static DescribeResourceGroupResp fromGRPC(io.milvus.grpc.DescribeResourceGroupResponse response) {
-        io.milvus.grpc.ResourceGroup rg = response.getResourceGroup();
-        return DescribeResourceGroupResp.builder().resourceGroup(ResourceGroup.fromGRPC(rg)).build();
+    public DescribeResourceGroupResp(io.milvus.grpc.DescribeResourceGroupResponse response) {
+        this.resourceGroup = new ResourceGroup(response.getResourceGroup());
     }
 }

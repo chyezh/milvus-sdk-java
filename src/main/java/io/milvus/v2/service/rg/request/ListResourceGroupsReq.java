@@ -6,6 +6,9 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 public class ListResourceGroupsReq {
+    public ListResourceGroupsReq() {
+    }
+
     public io.milvus.grpc.ListResourceGroupsRequest toGRPC() {
         return io.milvus.grpc.ListResourceGroupsRequest.newBuilder().build();
     }

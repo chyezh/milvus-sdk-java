@@ -13,10 +13,12 @@ public class ResourceGroup {
     private java.util.Map<String, Integer> incomingNodeNum;
     private ResourceGroupConfig resourceGroupConfig;
 
-    public static ResourceGroup fromGRPC(io.milvus.grpc.ResourceGroup rg) {
-        return ResourceGroup.builder().resourceGroupName(rg.getName())
-                .availableNodeNum(rg.getNumAvailableNode()).loadedReplicaNum(rg.getNumLoadedReplicaMap())
-                .outgoingNodeNum(rg.getNumOutgoingNodeMap()).incomingNodeNum(rg.getNumIncomingNodeMap())
-                .resourceGroupConfig(ResourceGroupConfig.fromGRPC(rg.getConfig())).build();
+    public ResourceGroup(io.milvus.grpc.ResourceGroup rg) {
+        this.resourceGroupName = rg.getName();
+        this.availableNodeNum = rg.getNumAvailableNode();
+        this.loadedReplicaNum = rg.getNumLoadedReplicaMap();
+        this.outgoingNodeNum = rg.getNumOutgoingNodeMap();
+        this.incomingNodeNum = rg.getNumIncomingNodeMap();
+        this.resourceGroupConfig = new ResourceGroupConfig(rg.getConfig());
     }
 }

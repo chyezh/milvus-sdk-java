@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 public class UpdateResourceGroupsReq {
     private Map<String, ResourceGroupConfig> resourceGroups;
 
+    public UpdateResourceGroupsReq(Map<String, ResourceGroupConfig> resourceGroups) {
+        this.resourceGroups = resourceGroups;
+    }
+
     public io.milvus.grpc.UpdateResourceGroupsRequest toGRPC() {
         io.milvus.grpc.UpdateResourceGroupsRequest.Builder builder = io.milvus.grpc.UpdateResourceGroupsRequest
                 .newBuilder();

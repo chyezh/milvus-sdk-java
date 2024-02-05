@@ -8,6 +8,10 @@ import lombok.experimental.SuperBuilder;
 public class DropResourceGroupReq {
     private String resourceGroupName;
 
+    public DropResourceGroupReq(String resourceGroupName) {
+        this.resourceGroupName = resourceGroupName;
+    }
+
     public io.milvus.grpc.DropResourceGroupRequest toGRPC() {
         return io.milvus.grpc.DropResourceGroupRequest.newBuilder().setResourceGroup(resourceGroupName).build();
     }

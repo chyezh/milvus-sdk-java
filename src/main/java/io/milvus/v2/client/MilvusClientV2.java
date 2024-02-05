@@ -22,6 +22,9 @@ import io.milvus.v2.service.rbac.UserService;
 import io.milvus.v2.service.rbac.request.*;
 import io.milvus.v2.service.rbac.response.DescribeRoleResp;
 import io.milvus.v2.service.rbac.response.DescribeUserResp;
+import io.milvus.v2.service.replica.ReplicaService;
+import io.milvus.v2.service.replica.request.GetReplicasReq;
+import io.milvus.v2.service.replica.response.GetReplicasResp;
 import io.milvus.v2.service.utility.UtilityService;
 import io.milvus.v2.service.utility.request.AlterAliasReq;
 import io.milvus.v2.service.utility.request.CreateAliasReq;
@@ -48,6 +51,7 @@ public class MilvusClientV2 {
     private final ClientUtils clientUtils = new ClientUtils();
     private final CollectionService collectionService = new CollectionService();
     private final ResourceGroupService resourceGroupService = new ResourceGroupService();
+    private final ReplicaService replicaService = new ReplicaService();
     private final IndexService indexService = new IndexService();
     private final VectorService vectorService = new VectorService();
     private final PartitionService partitionService = new PartitionService();
@@ -594,5 +598,15 @@ public class MilvusClientV2 {
      */
     public void transferReplica(TransferReplicaReq request) {
         resourceGroupService.transferReplica(this.blockingStub, request);
+    }
+
+    /**
+     * get replicas info.
+     * 
+     * @param request
+     * @return GetReplicasResp
+     */
+    public GetReplicasResp getReplicas(GetReplicasReq request) {
+        return replicaService.getReplicas(this.blockingStub, request);
     }
 }

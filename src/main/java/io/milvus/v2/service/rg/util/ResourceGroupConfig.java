@@ -15,22 +15,15 @@ public class ResourceGroupConfig {
     private List<ResourceGroupTransfer> from;
     private List<ResourceGroupTransfer> to;
 
-    @Getter
-    public class Transfer {
-        private String resourceGroupName;
-    }
-
-    public static ResourceGroupConfig fromGRPC(io.milvus.grpc.ResourceGroupConfigOrBuilder grpcConfig) {
-        return ResourceGroupConfig.builder()
-                .requests(ResourceGroupLimit.fromGRPC(grpcConfig.getRequests()))
-                .limits(ResourceGroupLimit.fromGRPC(grpcConfig.getLimits()))
-                .from(grpcConfig.getFromList().stream()
-                        .map(transfer -> ResourceGroupTransfer.fromGRPC(transfer))
-                        .collect(Collectors.toList()))
-                .to(grpcConfig.getToList().stream()
-                        .map(transfer -> ResourceGroupTransfer.fromGRPC(transfer))
-                        .collect(Collectors.toList()))
-                .build();
+    public ResourceGroupConfig(io.milvus.grpc.ResourceGroupConfigOrBuilder grpcConfig) {
+        this.requests = new ResourceGroupLimit(grpcConfig.getRequests());
+        this.limits = new ResourceGroupLimit(grpcConfig.getLimits());
+        this.from = grpcConfig.getFromList().stream()
+                .map(transfer -> new ResourceGroupTransfer(transfer))
+                .collect(Collectors.toList());
+        this.to = grpcConfig.getToList().stream()
+                .map(transfer -> new ResourceGroupTransfer(transfer))
+                .collect(Collectors.toList());
     }
 
     public io.milvus.grpc.ResourceGroupConfig toGRPC() {

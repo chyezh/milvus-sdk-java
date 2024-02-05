@@ -8,8 +8,12 @@ import lombok.experimental.SuperBuilder;
 public class ResourceGroupTransfer {
     private String resourceGroupName;
 
-    public static ResourceGroupTransfer fromGRPC(io.milvus.grpc.ResourceGroupTransferOrBuilder grpcTransfer) {
-        return ResourceGroupTransfer.builder().resourceGroupName(grpcTransfer.getResourceGroup()).build();
+    public ResourceGroupTransfer(String resourceGroupName) {
+        this.resourceGroupName = resourceGroupName;
+    }
+
+    public ResourceGroupTransfer(io.milvus.grpc.ResourceGroupTransferOrBuilder grpcTransfer) {
+        this.resourceGroupName = grpcTransfer.getResourceGroup();
     }
 
     public io.milvus.grpc.ResourceGroupTransfer toGRPC() {
