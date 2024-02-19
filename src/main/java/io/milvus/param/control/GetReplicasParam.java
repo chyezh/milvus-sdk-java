@@ -10,10 +10,12 @@ import lombok.NonNull;
  */
 @Getter
 public class GetReplicasParam {
+    private final String databaseName;
     private final String collectionName;
     private boolean withShardNodes;
 
     private GetReplicasParam(@NonNull Builder builder) {
+        this.databaseName = builder.databaseName;
         this.collectionName = builder.collectionName;
         this.withShardNodes = true;
     }
@@ -27,8 +29,20 @@ public class GetReplicasParam {
      */
     public static final class Builder {
         private String collectionName;
+        private String databaseName;
 
         private Builder() {
+        }
+
+        /**
+         * Sets the database name. Database name cannot be empty or null.
+         * 
+         * @param databaseName
+         * @return
+         */
+        public Builder withDatabaseName(@NonNull String databaseName) {
+            this.databaseName = databaseName;
+            return this;
         }
 
         /**
