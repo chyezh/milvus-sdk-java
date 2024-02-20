@@ -66,9 +66,18 @@ public class IndexService extends BaseService {
                 request.getCollectionName(), request.getFieldName(), request.getIndexName());
         DescribeIndexRequest describeIndexRequest = DescribeIndexRequest.newBuilder()
                 .setCollectionName(request.getCollectionName())
-                .setFieldName(request.getFieldName())
-                .setIndexName(request.getIndexName())
+//                .setFieldName(request.getFieldName())
+//                .setIndexName(request.getIndexName())
                 .build();
+        if (request.getFieldName() != null) {
+            describeIndexRequest = describeIndexRequest.toBuilder()
+                    .setFieldName(request.getFieldName())
+                    .build();
+        } else if (request.getIndexName() != null) {
+            describeIndexRequest = describeIndexRequest.toBuilder()
+                    .setIndexName(request.getIndexName())
+                    .build();
+        }
 
         DescribeIndexResponse response = milvusServiceBlockingStub.describeIndex(describeIndexRequest);
         rpcUtils.handleResponse(title, response.getStatus());
